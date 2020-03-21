@@ -3,6 +3,34 @@ import os
 import time
 os.mkdir('ogp')
 
+##フォントのダウンロードとインストール
+import urllib.request
+import sys
+import re
+import shutil
+
+FONTNAME="Roboto"
+csspath = FONTNAME + ".css"
+fontpath = FONTNAME + ".ttf"
+
+#for Mac
+#INSTALL_PATH = os.path.expanduser('~') + "/Library/Fonts/"
+#for ubuntu
+INSTALL_PATH = os.path.expanduser('~') + "/.local/share/fonts"
+
+PATTERN  = r"url\(([\w/:%#\$&\?\(\)~\.=\+\-]+)\)"
+
+#CSSのダウンロード
+urllib.request.urlretrieve("http://fonts.googleapis.com/css?family="+FONTNAME,"{0}".format(csspath))
+
+with open(csspath) as f:
+    s = f.read()
+match = re.findall(PATTERN, s)
+print("Font File:" + match[0])
+#Font本体のダウンロード
+urllib.request.urlretrieve(match[0],"{0}".format(fontpath))
+shutil.copy2(fontpath, INSTALL_PATH+fontpath)
+
 PATHS = {
     '/?dummy': [959,500],
     '/cards/details-of-confirmed-cases': [959,500],
@@ -26,6 +54,7 @@ driver = webdriver.Chrome(options=options)
 for lang in ['ja', 'en', 'zh-cn', 'zh-tw', 'ko', 'ja-basic']:
     os.mkdir('ogp/'+lang)
     for path, size in PATHS.items():
+        print(lang+":"+path)
         driver.set_window_size(size[0], size[1])
         if lang == 'ja':
             driver.get("http://localhost:8000"+path+"?ogp=true")
@@ -33,3 +62,6 @@ for lang in ['ja', 'en', 'zh-cn', 'zh-tw', 'ko', 'ja-basic']:
         else:
             driver.get("http://localhost:8000/"+lang+path+"?ogp=true")
             driver.save_screenshot('ogp/'+lang+'/'+path.replace('/cards/', '').replace('/', '_')+'.png')
+
+driver.close()
+driver.quit()
