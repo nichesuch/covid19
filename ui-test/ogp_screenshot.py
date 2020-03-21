@@ -16,7 +16,7 @@ fontpath = FONTNAME + ".ttf"
 #for Mac
 #INSTALL_PATH = os.path.expanduser('~') + "/Library/Fonts/"
 #for ubuntu
-INSTALL_PATH = os.path.expanduser('~') + "/.local/share/fonts"
+INSTALL_PATH = "~/.fonts/"
 
 PATTERN  = r"url\(([\w/:%#\$&\?\(\)~\.=\+\-]+)\)"
 
